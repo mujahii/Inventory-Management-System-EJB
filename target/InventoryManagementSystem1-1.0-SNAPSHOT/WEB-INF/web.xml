@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="https://jakarta.ee/xml/ns/jakartaee"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
+   version="6.0">
+    
+    <!-- Application Name -->
+    <display-name>Inventory Management System</display-name>
+    
+    <!-- JSF Configuration -->
+    <servlet>
+        <servlet-name>Faces Servlet</servlet-name>
+        <servlet-class>jakarta.faces.webapp.FacesServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    
+    <servlet-mapping>
+        <servlet-name>Faces Servlet</servlet-name>
+        <url-pattern>/faces/*</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>Faces Servlet</servlet-name>
+        <url-pattern>*.xhtml</url-pattern>
+    </servlet-mapping>
+    
+    <!-- Character Encoding Filter -->
+    <filter>
+        <filter-name>EncodingFilter</filter-name>
+        <filter-class>jakarta.servlet.Filter</filter-class>
+        <init-param>
+            <param-name>encoding</param-name>
+            <param-value>UTF-8</param-value>
+        </init-param>
+        <init-param>
+            <param-name>forceEncoding</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>EncodingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    
+    <!-- Welcome File -->
+    <welcome-file-list>
+        <welcome-file>login.xhtml</welcome-file>
+    </welcome-file-list>
+    
+    <!-- Session Configuration -->
+    <session-config>
+        <session-timeout>30</session-timeout>
+    </session-config>
+    
+    <!-- Security Constraints -->
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>Protected Area</web-resource-name>
+            <url-pattern>/admin/*</url-pattern>
+            <http-method>GET</http-method>
+            <http-method>POST</http-method>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>ADMIN</role-name>
+        </auth-constraint>
+    </security-constraint>
+    <security-role>
+        <role-name>ADMIN</role-name>
+    </security-role>
+    
+    <!-- Error Pages -->
+    <error-page>
+        <error-code>404</error-code>
+        <location>/error/404.xhtml</location>
+    </error-page>
+    <error-page>
+        <error-code>500</error-code>
+        <location>/error/500.xhtml</location>
+    </error-page>
+    
+    <!-- Context Parameters -->
+    <context-param>
+        <param-name>jakarta.faces.PROJECT_STAGE</param-name>
+        <param-value>Development</param-value>
+    </context-param>
+    <context-param>
+        <param-name>primefaces.THEME</param-name>
+        <param-value>saga</param-value>
+    </context-param>
+</web-app>

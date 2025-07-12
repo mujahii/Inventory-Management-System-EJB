@@ -1,0 +1,54 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<h:head>
+    <title>Login - Inventory Management System</title>
+    <h:outputStylesheet name="css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+</h:head>
+<h:body>
+    <div class="card">
+        <div class="card-header">
+            <i class="fas fa-box-open logo"></i>
+            <h1>Welcome back</h1>
+            <p>Sign in to your inventory account</p>
+        </div>
+        <h:form>
+            <p:growl id="messages" showDetail="true" />
+            <div class="p-field">
+                <p:outputLabel for="username" value="Username" />
+                <div class="p-input-icon-right">
+                    <i class="pi pi-user" />
+                    <p:inputText id="username" value="#{loginBean.username}" required="true" label="Username" placeholder="Enter your username"/>
+                </div>
+            </div>
+
+            <div class="p-field">
+                <p:outputLabel for="password" value="Password" />
+                <div class="p-input-icon-right">
+                    <i class="pi pi-lock" />
+                    <p:password id="password" value="#{loginBean.password}" required="true" label="Password" placeholder="Enter your password"/>
+                </div>
+            </div>
+
+            <p:commandButton value="Login" action="#{loginBean.login}" update="messages" styleClass="w-100" />
+
+            <div class="link-container mt-20">
+                <p:link outcome="register">
+                    <h:outputText value="Don't have an account? " />
+                    <strong><h:outputText value="Sign up" /></strong>
+                </p:link>
+            </div>
+            
+            <p:commandButton value="Admin Login" action="admin-login?faces-redirect=true" immediate="true" styleClass="w-100 ui-button-secondary mt-10"/>
+
+        </h:form>
+        <div class="card-footer">
+            <p>&copy; #{loginBean.currentYear} Inventory Management System. All rights reserved.</p>
+        </div>
+    </div>
+</h:body>
+</html>

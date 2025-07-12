@@ -1,0 +1,149 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+<h:head>
+    <title>Public Inventory - Dashboard</title>
+    <h:outputStylesheet name="css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+</h:head>
+<h:body>
+    <!-- Header -->
+    <div class="dashboard-header">
+        <div>
+            <h1 class="dashboard-title">
+                <i class="fas fa-box-open" style="margin-right: 15px;"></i>
+                Public Inventory
+            </h1>
+            <p class="welcome-text">Welcome, #{loginBean.currentUsername}! Browse our inventory system</p>
+        </div>
+        <h:form>
+            <p:commandButton value="Manage" action="inventory?faces-redirect=true" 
+                           styleClass="logout-btn ml-10"
+                           rendered="#{loginBean.loggedIn}"/>
+            <p:commandButton value="Admin" action="admin?faces-redirect=true" 
+                           styleClass="logout-btn ml-10"
+                           rendered="#{loginBean.isAdmin()}"/>
+            <p:commandButton value="Logout" action="#{loginBean.logout}" 
+                           styleClass="logout-btn ml-10" rendered="#{loginBean.loggedIn}"/>
+            <p:commandButton value="Login" action="login?faces-redirect=true" 
+                           styleClass="logout-btn" rendered="#{!loginBean.loggedIn}"/>
+        </h:form>
+    </div>
+
+    <!-- Content -->
+    <div class="dashboard-content">
+        <h:form id="dashboardForm">
+            <p:growl id="messages" showDetail="true"/>
+            
+            <!-- Statistics Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <i class="fas fa-boxes stat-icon total"></i>
+                    <div class="stat-number">#{itemBean.totalItems}</div>
+                    <div class="stat-label">Total Items</div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-check-circle stat-icon available"></i>
+                    <div class="stat-number">#{itemBean.availableItems}</div>
+                    <div class="stat-label">Available Items</div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-exclamation-triangle stat-icon low-stock"></i>
+                    <div class="stat-number">#{itemBean.lowStockCount}</div>
+                    <div class="stat-label">Low Stock</div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-tags stat-icon categories"></i>
+                    <div class="stat-number">#{itemBean.categoriesCount}</div>
+                    <div class="stat-label">Categories</div>
+                </div>
+            </div>
+
+            <!-- Search and Filter Section -->
+            <div class="search-section">
+                <div class="search-header">
+                    <i class="fas fa-search" style="margin-right: 10px;"></i>
+                    Search and Filter Items
+                </div>
+                <div class="search-form">
+                    <div class="p-field">
+                        <p:inputText id="searchItem" value="#{itemBean.searchKeyword}" 
+                                   placeholder="Search items..." styleClass="w-100"/>
+                    </div>
+                    <div class="p-field">
+                        <p:selectOneMenu id="categoryFilter" value="#{itemBean.filterCategory}" 
+                                       styleClass="w-100">
+                            <f:selectItem itemLabel="All Categories" itemValue="" />
+                            <f:selectItems value="#{itemBean.categories}" />
+                        </p:selectOneMenu>
+                    </div>
+                    <div class="p-field">
+                        <p:selectOneMenu id="statusFilter" value="#{itemBean.filterStatus}" 
+                                       styleClass="w-100">
+                            <f:selectItem itemLabel="All Status" itemValue="" />
+                            <f:selectItem itemLabel="Available" itemValue="available" />
+                            <f:selectItem itemLabel="Low Stock" itemValue="low_stock" />
+                            <f:selectItem itemLabel="Out of Stock" itemValue="out_of_stock" />
+                        </p:selectOneMenu>
+                    </div>
+                    <p:commandButton value="Search" action="#{itemBean.searchItems}" 
+                                   update="dashboardForm:itemsContainer dashboardForm:messages" 
+                                   icon="pi pi-search" styleClass="ui-button-info"/>
+                    <p:commandButton value="Clear" action="#{itemBean.clearFilters}" 
+                                   update="dashboardForm:itemsContainer dashboardForm:messages" 
+                                   icon="pi pi-times" styleClass="ui-button-secondary"/>
+                </div>
+            </div>
+
+            <!-- Items Display -->
+            <h:panelGroup id="itemsContainer">
+                <div class="items-grid">
+                    <ui:repeat value="#{itemBean.filteredItems}" var="item">
+                        <div class="item-card">
+                            <div class="item-card-content">
+                                <div class="item-info">
+                                    <div class="item-name">#{item.itemName}</div>
+                                    <div class="item-category">
+                                        <i class="fas fa-tag" style="margin-right: 5px;"></i>
+                                        #{item.category}
+                                    </div>
+                                    <div class="item-location">
+                                        <i class="fas fa-map-marker-alt" style="margin-right: 5px;"></i>
+                                        #{item.location != null ? item.location : 'Not specified'}
+                                    </div>
+                                    <span class="item-quantity #{item.quantity gt 20 ? 'quantity-high' : (item.quantity gt 5 ? 'quantity-medium' : 'quantity-low')}">
+                                        Stock: #{item.quantity}
+                                    </span>
+                                </div>
+                                <div class="item-price">
+                                    <h:outputText value="#{item.price}">
+                                        <f:convertNumber type="currency" currencySymbol="$" />
+                                    </h:outputText>
+                                </div>
+                            </div>
+                        </div>
+                    </ui:repeat>
+                </div>
+                
+                <!-- No Items Message -->
+                <h:panelGroup rendered="#{empty itemBean.filteredItems}">
+                    <div class="no-items-message">
+                        <i class="fas fa-search"></i>
+                        <h3>No items found</h3>
+                        <p>Try adjusting your search criteria or clear the filters.</p>
+                    </div>
+                </h:panelGroup>
+            </h:panelGroup>
+        </h:form>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <p>&copy; #{loginBean.currentYear} Inventory Management System. All rights reserved.</p>
+    </div>
+</h:body>
+</html>

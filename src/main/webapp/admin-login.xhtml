@@ -1,0 +1,52 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<h:head>
+    <title>Admin Login - Inventory Management System</title>
+    <h:outputStylesheet name="css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+</h:head>
+<h:body>
+    <div class="card">
+        <div class="card-header">
+            <i class="fas fa-shield-alt logo"></i>
+            <h1>Admin Access</h1>
+            <p>Sign in to your administrator account</p>
+        </div>
+        <h:form>
+            <p:growl id="messages" showDetail="true" />
+            <div class="p-field">
+                <p:outputLabel for="adminUsername" value="Admin Username" />
+                <div class="p-input-icon-right">
+                    <i class="pi pi-user" />
+                    <p:inputText id="adminUsername" value="#{adminLoginBean.username}" required="true" label="Admin Username" placeholder="Enter admin username"/>
+                </div>
+            </div>
+
+            <div class="p-field">
+                <p:outputLabel for="adminPassword" value="Admin Password" />
+                <div class="p-input-icon-right">
+                    <i class="pi pi-lock" />
+                    <p:password id="adminPassword" value="#{adminLoginBean.password}" required="true" label="Admin Password" placeholder="Enter admin password"/>
+                </div>
+            </div>
+
+            <p:commandButton value="Admin Login" action="#{adminLoginBean.adminLogin}" update="messages" styleClass="w-100" />
+
+            <div class="link-container mt-20">
+                <p:link outcome="login">
+                    <h:outputText value="Back to " />
+                    <strong><h:outputText value="User Login" /></strong>
+                </p:link>
+            </div>
+
+        </h:form>
+        <div class="card-footer">
+            <p>&copy; #{adminLoginBean.currentYear} Inventory Management System. All rights reserved.</p>
+        </div>
+    </div>
+</h:body>
+</html>

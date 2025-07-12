@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<h:head>
+    <title>User Registration - Inventory Management System</title>
+    <h:outputStylesheet name="css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+</h:head>
+<h:body>
+    <div class="card">
+        <div class="card-header">
+            <i class="fas fa-user-plus logo"></i>
+            <h1>Create Your Account</h1>
+            <p>Get started with your own inventory management.</p>
+        </div>
+        <h:form>
+            <p:growl id="messages" showDetail="true" />
+
+            <div class="p-field">
+                <p:outputLabel for="username" value="Username"/>
+                <div class="p-input-icon-right">
+                    <i class="pi pi-user" />
+                    <p:inputText id="username" value="#{registerBean.user.username}" required="true"
+                                 requiredMessage="Username is required."
+                                 placeholder="e.g., john.doe"
+                                 validatorMessage="Username must be between 3 and 50 characters.">
+                        <f:validateLength minimum="3" maximum="50" />
+                    </p:inputText>
+                </div>
+            </div>
+
+            <div class="p-field">
+                <p:outputLabel for="email" value="Email"/>
+                <div class="p-input-icon-right">
+                    <i class="pi pi-envelope" />
+                    <p:inputText id="email" value="#{registerBean.user.email}" required="true"
+                                 requiredMessage="Email is required."
+                                 placeholder="e.g., john.doe@example.com"
+                                 validatorMessage="Please provide a valid email address.">
+                        <f:validateRegex pattern="^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$"/>
+                    </p:inputText>
+                </div>
+            </div>
+
+            <div class="p-field">
+                <p:outputLabel for="password" value="Password"/>
+                <p:password id="password" value="#{registerBean.user.password}" required="true"
+                            requiredMessage="Password is required."
+                            placeholder="Choose a strong password"
+                            validatorMessage="Password must be at least 6 characters."
+                            feedback="true" weakLabel="Weak" goodLabel="Good" strongLabel="Strong"
+                            autocomplete="off"/>
+            </div>
+
+            <div class="p-field">
+                <p:outputLabel for="confirmPassword" value="Confirm Password"/>
+                <p:password id="confirmPassword" value="#{registerBean.confirmPassword}" required="true"
+                            requiredMessage="Please confirm your password."
+                            placeholder="Re-enter your password"
+                            autocomplete="off"/>
+            </div>
+
+            <p:commandButton value="Register" action="#{registerBean.register}" update="@form messages" styleClass="w-100" />
+
+            <div class="link-container mt-20">
+                <p:link outcome="login">
+                    <h:outputText value="Already have an account? " />
+                    <strong><h:outputText value="Login" /></strong>
+                </p:link>
+            </div>
+        </h:form>
+        <div class="card-footer">
+            <p>&copy; #{registerBean.currentYear} Inventory Management System. All Rights Reserved.</p>
+        </div>
+    </div>
+</h:body>
+</html>

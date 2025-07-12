@@ -1,0 +1,572 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+<h:head>
+    <title>My Inventory - Dashboard</title>
+    <h:outputStylesheet name="css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <style>
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            margin: 0; 
+            padding: 0; 
+            background-color: #f8f9fa; 
+        }
+        .main-container {
+            display: flex;
+            min-height: 100vh;
+        }
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        .profile-section {
+            padding: 30px 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5em;
+        }
+        .profile-name {
+            font-size: 1.3em;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        .profile-email {
+            font-size: 0.9em;
+            opacity: 0.8;
+            margin-bottom: 20px;
+        }
+        .profile-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .stat-item {
+            text-align: center;
+            padding: 10px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+        }
+        .stat-number {
+            font-size: 1.5em;
+            font-weight: bold;
+            display: block;
+        }
+        .stat-label {
+            font-size: 0.8em;
+            opacity: 0.8;
+        }
+        .sidebar-nav {
+            padding: 20px 0;
+        }
+        .nav-item {
+            display: block;
+            padding: 15px 25px;
+            color: white;
+            text-decoration: none;
+            transition: background 0.3s ease;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            cursor: pointer;
+        }
+        .nav-item:hover, .nav-item.active {
+            background: rgba(255,255,255,0.1);
+        }
+        .nav-item i {
+            margin-right: 10px;
+            width: 20px;
+        }
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 0;
+        }
+        .header {
+            background: white;
+            padding: 20px 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header-title {
+            font-size: 1.8em;
+            font-weight: 600;
+            color: #333;
+            margin: 0;
+        }
+        .content-area {
+            padding: 30px;
+        }
+        .section {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+        .section-header {
+            padding: 25px 30px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .section-title {
+            font-size: 1.4em;
+            font-weight: 600;
+            color: #333;
+            margin: 0;
+            display: flex;
+            align-items: center;
+        }
+        .section-content {
+            padding: 30px;
+        }
+        .add-item-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        .form-group label {
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+        .items-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+        }
+        .item-card {
+            background: white;
+            border: 1px solid #eee;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .item-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        .item-card-header {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+        }
+        .item-name {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #333;
+            margin: 0 0 5px 0;
+        }
+        .item-category {
+            font-size: 0.9em;
+            color: #007ad9;
+            background: #f0f8ff;
+            padding: 4px 8px;
+            border-radius: 12px;
+            display: inline-block;
+        }
+        .item-actions {
+            display: flex;
+            gap: 8px;
+        }
+        .action-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        .btn-edit { background: #007ad9; color: white; }
+        .btn-edit:hover { background: #0056b3; }
+        .btn-delete { background: #dc3545; color: white; }
+        .btn-delete:hover { background: #c82333; }
+        .btn-view { background: #28a745; color: white; }
+        .btn-view:hover { background: #218838; }
+        .item-card-body {
+            padding: 20px;
+        }
+        .item-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+        }
+        .detail-label {
+            font-size: 0.8em;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 2px;
+        }
+        .detail-value {
+            font-weight: 600;
+            color: #333;
+        }
+        .quantity-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 600;
+            text-align: center;
+        }
+        .quantity-high { background: #d4edda; color: #155724; }
+        .quantity-medium { background: #fff3cd; color: #856404; }
+        .quantity-low { background: #f8d7da; color: #721c24; }
+        .price-display {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #28a745;
+            text-align: center;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        .logout-btn {
+            background: rgba(255,255,255,0.2) !important;
+            border: 1px solid rgba(255,255,255,0.3) !important;
+            color: white !important;
+        }
+        .logout-btn:hover {
+            background: rgba(255,255,255,0.3) !important;
+        }
+        .hidden { display: none; }
+        .page-nav {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .nav-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            background: #f8f9fa;
+            color: #333;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .nav-btn.active {
+            background: #007ad9;
+            color: white;
+        }
+        .nav-btn:hover {
+            background: #007ad9;
+            color: white;
+        }
+    </style>
+    <script>
+        function showSection(sectionName) {
+            // Hide all sections
+            document.getElementById('addItemSection').classList.add('hidden');
+            document.getElementById('itemsListSection').classList.add('hidden');
+            
+            // Show selected section
+            document.getElementById(sectionName + 'Section').classList.remove('hidden');
+            
+            // Update nav buttons
+            var buttons = document.querySelectorAll('.nav-btn');
+            buttons.forEach(function(btn) {
+                btn.classList.remove('active');
+            });
+            document.getElementById(sectionName + 'Btn').classList.add('active');
+        }
+        
+        // Show items list by default
+        window.onload = function() {
+            showSection('itemsList');
+        };
+    </script>
+</h:head>
+<h:body>
+    <div class="main-container">
+        <!-- Sidebar with Profile -->
+        <div class="sidebar">
+            <div class="profile-section">
+                <div class="profile-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="profile-name">#{loginBean.currentUsername}</div>
+                <div class="profile-email">#{loginBean.currentUser.email}</div>
+                
+                <div class="profile-stats">
+                    <div class="stat-item">
+                        <span class="stat-number">#{itemBean.userItemCount}</span>
+                        <span class="stat-label">My Items</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">#{itemBean.userLowStockCount}</span>
+                        <span class="stat-label">Low Stock</span>
+                    </div>
+                </div>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <button type="button" class="nav-item" onclick="showSection('itemsList')" id="itemsListNav">
+                    <i class="fas fa-list"></i> My Items
+                </button>
+                <button type="button" class="nav-item" onclick="showSection('addItem')" id="addItemNav">
+                    <i class="fas fa-plus"></i> Add New Item
+                </button>
+                <a href="dashboard.jsf" class="nav-item">
+                    <i class="fas fa-home"></i> Dashboard
+                </a>
+                <a href="admin.jsf" class="nav-item" rendered="#{loginBean.isAdmin()}">
+                    <i class="fas fa-shield-alt"></i> Admin Panel
+                </a>
+            </nav>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="main-content">
+            <div class="header">
+                <h1 class="header-title">My Inventory Dashboard</h1>
+                <h:form>
+                    <p:commandButton value="Logout" action="#{loginBean.logout}" 
+                                   styleClass="logout-btn" icon="pi pi-sign-out"/>
+                </h:form>
+            </div>
+
+            <div class="content-area">
+                <h:form id="mainForm">
+                    <p:growl id="messages" showDetail="true"/>
+
+                    <!-- Add Item Section -->
+                    <div id="addItemSection" class="section hidden">
+                        <div class="section-header">
+                            <h2 class="section-title">
+                                <i class="fas fa-plus" style="margin-right: 10px;"></i>
+                                Add New Item
+                            </h2>
+                        </div>
+                        <div class="section-content">
+                            <div class="add-item-form">
+                                <div class="form-group">
+                                    <p:outputLabel for="newItemName" value="Item Name" />
+                                    <p:inputText id="newItemName" value="#{itemBean.selectedItem.itemName}" 
+                                               required="true" placeholder="Enter item name"/>
+                                </div>
+                                <div class="form-group">
+                                    <p:outputLabel for="newItemCategory" value="Category" />
+                                    <p:inputText id="newItemCategory" value="#{itemBean.selectedItem.category}" 
+                                               placeholder="Enter category"/>
+                                </div>
+                                <div class="form-group">
+                                    <p:outputLabel for="newItemQuantity" value="Quantity" />
+                                    <p:inputText id="newItemQuantity" value="#{itemBean.selectedItem.quantity}" 
+                                               required="true" placeholder="Enter quantity">
+                                        <f:convertNumber integerOnly="true"/>
+                                    </p:inputText>
+                                </div>
+                                <div class="form-group">
+                                    <p:outputLabel for="newItemPrice" value="Price" />
+                                    <p:inputText id="newItemPrice" value="#{itemBean.selectedItem.price}" 
+                                               required="true" placeholder="Enter price">
+                                        <f:convertNumber type="currency" currencySymbol="$"/>
+                                    </p:inputText>
+                                </div>
+                                <div class="form-group">
+                                    <p:outputLabel for="newItemLocation" value="Location" />
+                                    <p:inputText id="newItemLocation" value="#{itemBean.selectedItem.location}" 
+                                               placeholder="Enter location"/>
+                                </div>
+                                <div class="form-group">
+                                    <p:outputLabel for="newItemDescription" value="Description" />
+                                    <p:inputTextarea id="newItemDescription" value="#{itemBean.selectedItem.description}" 
+                                                   rows="3" placeholder="Enter description"/>
+                                </div>
+                            </div>
+                            <div style="text-align: center; margin-top: 20px;">
+                                <p:commandButton value="Add Item" action="#{itemBean.addItem}" 
+                                               update="mainForm:messages mainForm:itemsContainer" 
+                                               icon="pi pi-plus" styleClass="ui-button-success"
+                                               style="margin-right: 10px;"/>
+                                <p:commandButton value="Clear Form" action="#{itemBean.clearForm}" 
+                                               update="mainForm:addItemSection" immediate="true"
+                                               icon="pi pi-refresh" styleClass="ui-button-secondary"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Items List Section -->
+                    <div id="itemsListSection" class="section">
+                        <div class="section-header">
+                            <h2 class="section-title">
+                                <i class="fas fa-list" style="margin-right: 10px;"></i>
+                                My Items
+                            </h2>
+                            <p:commandButton value="Refresh" action="#{itemBean.loadUserItems}" 
+                                           update="mainForm:itemsContainer" 
+                                           icon="pi pi-refresh" styleClass="ui-button-secondary"/>
+                        </div>
+                        <div class="section-content">
+                            <h:panelGroup id="itemsContainer">
+                                <div class="items-grid">
+                                    <ui:repeat value="#{itemBean.userItems}" var="item">
+                                        <div class="item-card">
+                                            <div class="item-card-header">
+                                                <div>
+                                                    <h3 class="item-name">#{item.itemName}</h3>
+                                                    <span class="item-category">#{item.category}</span>
+                                                </div>
+                                                <div class="item-actions">
+                                                    <button type="button" class="action-btn btn-view" 
+                                                          onclick="PF('viewItemDialog').show()" 
+                                                          title="View Details">
+                                                        <i class="fas fa-eye"></i>
+                                                    </button>
+                                                    <p:commandButton styleClass="action-btn btn-edit" 
+                                                                   actionListener="#{itemBean.selectForEdit(item)}"
+                                                                   update="editItemForm" 
+                                                                   oncomplete="PF('editItemDialog').show()"
+                                                                   title="Edit Item" process="@this">
+                                                        <i class="fas fa-edit"></i>
+                                                    </p:commandButton>
+                                                    <p:commandButton styleClass="action-btn btn-delete" 
+                                                                   actionListener="#{itemBean.deleteItem(item)}"
+                                                                   update="mainForm:messages mainForm:itemsContainer"
+                                                                   title="Delete Item" process="@this">
+                                                        <p:confirm header="Confirmation" 
+                                                                 message="Are you sure you want to delete '#{item.itemName}'?" 
+                                                                 icon="pi pi-exclamation-triangle"/>
+                                                        <i class="fas fa-trash"></i>
+                                                    </p:commandButton>
+                                                </div>
+                                            </div>
+                                            <div class="item-card-body">
+                                                <div class="item-details">
+                                                    <div class="detail-item">
+                                                        <span class="detail-label">Location</span>
+                                                        <span class="detail-value">#{item.location != null ? item.location : 'Not specified'}</span>
+                                                    </div>
+                                                    <div class="detail-item">
+                                                        <span class="detail-label">Stock</span>
+                                                        <span class="quantity-badge #{item.quantity gt 20 ? 'quantity-high' : (item.quantity gt 5 ? 'quantity-medium' : 'quantity-low')}">
+                                                            #{item.quantity} units
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div class="price-display">
+                                                    <h:outputText value="#{item.price}">
+                                                        <f:convertNumber type="currency" currencySymbol="$" />
+                                                    </h:outputText>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </ui:repeat>
+                                </div>
+                                
+                                <!-- No Items Message -->
+                                <h:panelGroup rendered="#{empty itemBean.userItems}">
+                                    <div style="text-align: center; padding: 60px 20px; color: #666;">
+                                        <i class="fas fa-box-open" style="font-size: 4em; margin-bottom: 20px; opacity: 0.3;"></i>
+                                        <h3>No items found</h3>
+                                        <p>You haven't added any items yet. Click "Add New Item" to get started!</p>
+                                        <p:commandButton value="Add Your First Item" 
+                                                       onclick="showSection('addItem')" type="button"
+                                                       icon="pi pi-plus" styleClass="ui-button-success"/>
+                                    </div>
+                                </h:panelGroup>
+                            </h:panelGroup>
+                        </div>
+                    </div>
+
+                    <!-- Confirmation Dialog -->
+                    <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                        <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check" />
+                        <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="pi pi-times" />
+                    </p:confirmDialog>
+                </h:form>
+
+                <!-- Edit Item Dialog -->
+                <p:dialog header="Edit Item Details" widgetVar="editItemDialog" modal="true" 
+                         resizable="false" width="500" showEffect="fade" hideEffect="fade">
+                    <h:form id="editItemForm">
+                        <div class="add-item-form">
+                            <div class="form-group">
+                                <p:outputLabel for="editItemName" value="Item Name" />
+                                <p:inputText id="editItemName" value="#{itemBean.selectedItem.itemName}" 
+                                           required="true"/>
+                            </div>
+                            <div class="form-group">
+                                <p:outputLabel for="editItemCategory" value="Category" />
+                                <p:inputText id="editItemCategory" value="#{itemBean.selectedItem.category}"/>
+                            </div>
+                            <div class="form-group">
+                                <p:outputLabel for="editItemQuantity" value="Quantity" />
+                                <p:inputText id="editItemQuantity" value="#{itemBean.selectedItem.quantity}" 
+                                           required="true">
+                                    <f:convertNumber integerOnly="true"/>
+                                </p:inputText>
+                            </div>
+                            <div class="form-group">
+                                <p:outputLabel for="editItemPrice" value="Price" />
+                                <p:inputText id="editItemPrice" value="#{itemBean.selectedItem.price}" 
+                                           required="true">
+                                    <f:convertNumber type="currency" currencySymbol="$"/>
+                                </p:inputText>
+                            </div>
+                            <div class="form-group">
+                                <p:outputLabel for="editItemLocation" value="Location" />
+                                <p:inputText id="editItemLocation" value="#{itemBean.selectedItem.location}"/>
+                            </div>
+                            <div class="form-group">
+                                <p:outputLabel for="editItemDescription" value="Description" />
+                                <p:inputTextarea id="editItemDescription" value="#{itemBean.selectedItem.description}" 
+                                               rows="3"/>
+                            </div>
+                        </div>
+                        <f:facet name="footer">
+                            <p:commandButton value="Save Changes" action="#{itemBean.updateItem}" 
+                                           update=":mainForm:messages :mainForm:itemsContainer" 
+                                           oncomplete="if (!args.validationFailed) PF('editItemDialog').hide();"
+                                           icon="pi pi-check" styleClass="ui-button-success"/>
+                            <p:commandButton value="Cancel" onclick="PF('editItemDialog').hide()" 
+                                           type="button" icon="pi pi-times" styleClass="ui-button-secondary"/>
+                        </f:facet>
+                    </h:form>
+                </p:dialog>
+            </div>
+        </div>
+    </div>
+</h:body>
+</html>
